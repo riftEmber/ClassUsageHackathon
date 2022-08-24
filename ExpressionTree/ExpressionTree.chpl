@@ -22,6 +22,10 @@ module ExpressionTree {
       leftChild = left;
       rightChild = right;
     }
+
+    iter preorder() {
+      halt("binary expressions must override preorder traversal iterator");
+    }
   }
 
   class AddExp : BinExp {
@@ -29,6 +33,11 @@ module ExpressionTree {
       super.init(left, right);
     }
     override proc eval() : int { return leftChild.eval() + rightChild.eval(); }
+    override iter preorder() {
+      yield "+";
+      yield leftChild.preorder();
+      yield rightChild.preorder();
+    }
   }
 
   class SubExp : BinExp {
@@ -36,6 +45,11 @@ module ExpressionTree {
       super.init(left, right);
     }
     override proc eval() : int { return leftChild.eval() - rightChild.eval(); }
+    override iter preorder() {
+      yield "-";
+      yield leftChild.preorder();
+      yield rightChild.preorder();
+    }
   }
 
   class MultExp : BinExp {
@@ -43,6 +57,11 @@ module ExpressionTree {
       super.init(left, right);
     }
     override proc eval() : int { return leftChild.eval() * rightChild.eval(); }
+    override iter preorder() {
+      yield "*";
+      yield leftChild.preorder();
+      yield rightChild.preorder();
+    }
   }
 
   proc main() {
@@ -51,5 +70,11 @@ module ExpressionTree {
 
     var result = tree.eval();
     writeln("Evaluation result: ", result);
+
+    writeln("Preorder traversal of expression tree:");
+    for node in tree.preorder() {
+      write(node);
+    }
+    writeln();
   }
 }
