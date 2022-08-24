@@ -59,16 +59,16 @@ module ExpressionTree {
     }
   }
 
-  override proc eval(tree: BinExp) : int {
+  proc eval(tree: BinExp) : int {
     select tree.op {
       when binOp.Add do
-        return tree.leftChild.eval() + tree.rightChild.eval();
+        return eval(tree.leftChild) + eval(tree.rightChild);
       when binOp.Sub do
-        return tree.leftChild.eval() - tree.rightChild.eval();
+        return eval(tree.leftChild) - eval(tree.rightChild);
       when binOp.Mult do
-        return tree.leftChild.eval() * tree.rightChild.eval();
+        return eval(tree.leftChild) * eval(tree.rightChild);
     }
-    halt("Unsupported binary operator '" + op: string + "' encountered");
+    halt("Unsupported binary operator '" + tree.op: string + "' encountered");
   }
 
   proc main() {
