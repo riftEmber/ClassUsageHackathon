@@ -4,6 +4,9 @@ module ExpressionTree {
       halt("Expression subclasses must override eval");
       // return -1;
     }
+    iter preorder() : string {
+      halt("expressions must override preorder traversal iterator");
+    }
   }
 
   class VarExp : Exp {
@@ -12,6 +15,9 @@ module ExpressionTree {
     proc init(value : int) { this.value = value; }
 
     override proc eval() : int { return value; }
+    override iter preorder() : string {
+      yield(value: string);
+    }
   }
 
   class BinExp : Exp {
@@ -22,8 +28,7 @@ module ExpressionTree {
       leftChild = left;
       rightChild = right;
     }
-
-    iter preorder() {
+    override iter preorder() : string {
       halt("binary expressions must override preorder traversal iterator");
     }
   }
@@ -33,10 +38,12 @@ module ExpressionTree {
       super.init(left, right);
     }
     override proc eval() : int { return leftChild.eval() + rightChild.eval(); }
-    override iter preorder() {
-      yield "+";
-      yield leftChild.preorder();
-      yield rightChild.preorder();
+    override iter preorder() : string {
+      yield "(+ ";
+      for i in leftChild.preorder() {yield i;}
+      yield " ";
+      for i in rightChild.preorder() {yield i;}
+      yield ")";
     }
   }
 
@@ -45,10 +52,12 @@ module ExpressionTree {
       super.init(left, right);
     }
     override proc eval() : int { return leftChild.eval() - rightChild.eval(); }
-    override iter preorder() {
-      yield "-";
-      yield leftChild.preorder();
-      yield rightChild.preorder();
+    override iter preorder() : string {
+      yield "(- ";
+      for i in leftChild.preorder() {yield i;}
+      yield " ";
+      for i in rightChild.preorder() {yield i;}
+      yield ")";
     }
   }
 
@@ -57,10 +66,12 @@ module ExpressionTree {
       super.init(left, right);
     }
     override proc eval() : int { return leftChild.eval() * rightChild.eval(); }
-    override iter preorder() {
-      yield "*";
-      yield leftChild.preorder();
-      yield rightChild.preorder();
+    override iter preorder() : string {
+      yield "(* ";
+      for i in leftChild.preorder() {yield i;}
+      yield " ";
+      for i in rightChild.preorder() {yield i;}
+      yield ")";
     }
   }
 
