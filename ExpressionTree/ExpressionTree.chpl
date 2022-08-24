@@ -1,4 +1,10 @@
 module ExpressionTree {
+  enum binOp {
+    Add,
+    Sub,
+    Mult
+  }
+
   class Exp {
     proc eval() : int {
       halt("Expression subclasses must override eval");
@@ -23,55 +29,50 @@ module ExpressionTree {
   class BinExp : Exp {
     var leftChild : owned Exp;
     var rightChild : owned Exp;
+    var op : binOp;
 
-    proc init(in left : owned Exp, in right : owned Exp) {
+    proc init(in left : owned Exp, in right : owned Exp, op: binOp) {
       leftChild = left;
       rightChild = right;
+      this.op = op;
     }
+
+    override proc eval() : int {
+      select op {
+        when binOp.Add do
+          return leftChild.eval() + rightChild.eval();
+        when binOp.Sub do
+          return leftChild.eval() - rightChild.eval();
+        when binOp.Mult do
+          return leftChild.eval() * rightChild.eval();
+      }
+      halt("Unsupported binary operator '" + op: string + "' encountered");
+    }
+
     override iter preorder() : string {
-      halt("binary expressions must override preorder traversal iterator");
+      yield "(" + op:string + " ";
+      for i in leftChild.preorder() {yield i;}
+      yield " ";
+      for i in rightChild.preorder() {yield i;}
+      yield ")";
     }
   }
 
   class AddExp : BinExp {
     proc init(in left : owned Exp, in right : owned Exp) {
-      super.init(left, right);
-    }
-    override proc eval() : int { return leftChild.eval() + rightChild.eval(); }
-    override iter preorder() : string {
-      yield "(+ ";
-      for i in leftChild.preorder() {yield i;}
-      yield " ";
-      for i in rightChild.preorder() {yield i;}
-      yield ")";
+      super.init(left, right, binOp.Add);
     }
   }
 
   class SubExp : BinExp {
     proc init(in left : owned Exp, in right : owned Exp) {
-      super.init(left, right);
-    }
-    override proc eval() : int { return leftChild.eval() - rightChild.eval(); }
-    override iter preorder() : string {
-      yield "(- ";
-      for i in leftChild.preorder() {yield i;}
-      yield " ";
-      for i in rightChild.preorder() {yield i;}
-      yield ")";
+      super.init(left, right, binOp.Sub);
     }
   }
 
   class MultExp : BinExp {
     proc init(in left : owned Exp, in right : owned Exp) {
-      super.init(left, right);
-    }
-    override proc eval() : int { return leftChild.eval() * rightChild.eval(); }
-    override iter preorder() : string {
-      yield "(* ";
-      for i in leftChild.preorder() {yield i;}
-      yield " ";
-      for i in rightChild.preorder() {yield i;}
-      yield ")";
+      super.init(left, right, binOp.Mult);
     }
   }
 
