@@ -59,7 +59,7 @@ module ExpressionTree {
     }
   }
 
-  proc eval(tree: borrowed Exp) : int {
+  proc eval(tree: borrowed Exp) : int throws {
     var asVarExp : VarExp? = tree : VarExp;
     if (asVarExp != nil) {
       return asVarExp!.value;
@@ -77,7 +77,7 @@ module ExpressionTree {
     }
   }
 
-  proc main() {
+  proc main() throws {
     var tree = new AddExp(new MultExp(new VarExp(2), new VarExp(3)),
                           new SubExp(new VarExp(5), new VarExp(3)));
 
